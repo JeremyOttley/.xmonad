@@ -1,0 +1,4 @@
+# .xmonad
+My XMonad configuration
+
+//sudo apt -y install xorg-dev webkit2gtk-4.0 nitrogen # libgcr-3-dev

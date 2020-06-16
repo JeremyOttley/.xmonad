@@ -1,2 +1,0 @@
-# .xmonad
-My XMonad configuration
