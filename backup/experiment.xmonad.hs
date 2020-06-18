@@ -14,8 +14,12 @@ import System.Exit
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
+-- My Additions
 import XMonad.Layout.NoBorders
+import XMonad.Hooks.ManageDocks
+import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
+
 
 myFont :: String
 myFont = "xft:Source Code Pro:bold:pixelsize=13"
@@ -188,7 +192,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = tiled ||| Mirror tiled ||| noBorders Full
+myLayout = avoidStruts (tiled ||| Mirror tiled ||| noBorders Full)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -253,7 +257,7 @@ myLogHook = return ()
 -- By default, do nothing.
 myStartupHook :: X ()
 myStartupHook = do
-          spawnOnce "nitrogen --restore &"
+          --spawnOnce "nitrogen --restore &"
           --spawnOnce "picom &"
           spawnOnce "emacs --daemon &"
           spawnOnce "export $(dbus-launch)"
@@ -264,7 +268,11 @@ myStartupHook = do
 
 -- Run xmonad with the settings you specify. No need to modify this.
 --
-main = xmonad defaults
+--main = xmonad defaults
+
+main = do
+  xmproc <- spawnPipe "xmobar -x 0 /home/jottley/.config/xmobar/xmobarrc"
+  xmonad $ docks defaults
 
 -- A structure containing your configuration settings, overriding
 -- fields in the default config. Any you don't override, will
