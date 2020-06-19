@@ -16,7 +16,7 @@ import qualified Data.Map        as M
 
 -- My Additions
 import XMonad.Layout.NoBorders
-import XMonad.Hooks.ManageDocks(avoidStruts, ToggleStruts(..))
+import XMonad.Hooks.ManageDocks
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
 import XMonad.Actions.GridSelect
