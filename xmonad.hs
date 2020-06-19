@@ -27,7 +27,7 @@ myFont = "xft:Source Code Pro:bold:pixelsize=13"
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-myTerminal      = "alacritty"
+myTerminal      = "xterm"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -262,6 +262,7 @@ myStartupHook :: X ()
 myStartupHook = do
           --spawnOnce "nitrogen --restore &"
           --spawnOnce "picom &"
+	  spawnOnce "feh --bg-scale ~/wallpaper.jpg"
           spawnOnce "emacs --daemon &"
           spawnOnce "export $(dbus-launch)"
 
