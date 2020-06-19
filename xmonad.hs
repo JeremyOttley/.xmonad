@@ -20,7 +20,6 @@ import XMonad.Hooks.ManageDocks(avoidStruts, ToggleStruts(..))
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
 
-
 myFont :: String
 myFont = "xft:Source Code Pro:bold:pixelsize=13"
 
@@ -198,7 +197,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts (tiled ||| Mirror tiled ||| noBorders Full)
+myLayout = avoidStruts (tiled ||| Mirror tiled ||| smartBorders Full)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
