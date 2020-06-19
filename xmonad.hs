@@ -80,7 +80,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     --, ((modm .|. shiftMask, xK_p     ), spawn "albert")
     
     -- launch nnn
-    , ((modm,               xK_f     ), spawn "xterm -e nnn")
+    , ((modm,               xK_f     ), spawn "xterm -e nnn $CWD")
     
     -- GridSelect
     , ((modm, xK_s), spawnSelected defaultGSConfig ["joplin", "idea", "discord", "acrobat", "gimp", "spotify", "firefox"])
