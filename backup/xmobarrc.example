@@ -1,5 +1,5 @@
 Config { font = "xft:Source Code Pro:pixelsize=12:antialias=true:hinting=true"
-       , additionalFonts = []
+       , additionalFonts = ["xft:FontAwesome:pixelsize=13"]
        , borderColor = "black"
        , border = TopB
        , bgColor = "black"
@@ -12,7 +12,7 @@ Config { font = "xft:Source Code Pro:pixelsize=12:antialias=true:hinting=true"
        , pickBroadest = False
        , persistent = False
        , hideOnStart = False
-       , iconRoot = "."
+       , iconRoot = "/home/jottley/.xmonad/xpm/"  -- default: "."
        , allDesktops = True
        , overrideRedirect = True
        , commands = [ Run Weather "KBWI" ["-t","<station>: <tempF>F",
@@ -33,6 +33,6 @@ Config { font = "xft:Source Code Pro:pixelsize=12:antialias=true:hinting=true"
                     ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = "%cpu% | %memory% * %swap% | %eth0% - %eth1% }\
+       , template = " <icon=haskell_20.xpm/> | %cpu% | %memory% * %swap% | %eth0% - %eth1% }\
                     \{ <fc=#ee9a00>%date%</fc>| %KBWI% | %uname%"
        }
