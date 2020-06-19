@@ -83,7 +83,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_f     ), spawn "xterm -e nnn")
     
     -- GridSelect
-    , ((modm, xK_s), spawnSelected defaultGSConfig ["xterm","gmplayer","gvim"])
+    , ((modm, xK_s), spawnSelected defaultGSConfig ["joplin", "idea", "discord", "acrobat", "gimp", "spotify", "firefox"])
 
     -- close focused window
     , ((modm .|. shiftMask, xK_c     ), kill)
