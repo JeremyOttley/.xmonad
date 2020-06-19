@@ -229,7 +229,9 @@ myManageHook = composeAll
     , className =? "Gimp"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "mpv"       --> doIgnore
-    , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat]
+    , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat
+    , title =? "Oracle VM VirtualBox Manager"     --> doFloat
+    , className =? "Oracle VM VirtualBox Manager" --> doShift  ( myWorkspaces !! 5)]
 
 ------------------------------------------------------------------------
 -- Event handling
@@ -260,10 +262,9 @@ myLogHook = return ()
 -- By default, do nothing.
 myStartupHook :: X ()
 myStartupHook = do
-          --spawnOnce "nitrogen --restore &"
           spawnOnce "picom &"
 	  spawnOnce "feh --bg-scale ~/wallpaper.jpg"
-          spawnOnce "emacs --daemon &"
+          spawnOnce "emacs25 --daemon &"
           spawnOnce "export $(dbus-launch)"
 
 
