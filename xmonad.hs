@@ -261,7 +261,7 @@ myLogHook = return ()
 myStartupHook :: X ()
 myStartupHook = do
           --spawnOnce "nitrogen --restore &"
-          --spawnOnce "picom &"
+          spawnOnce "picom &"
 	  spawnOnce "feh --bg-scale ~/wallpaper.jpg"
           spawnOnce "emacs --daemon &"
           spawnOnce "export $(dbus-launch)"
