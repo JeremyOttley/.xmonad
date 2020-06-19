@@ -16,7 +16,7 @@ import qualified Data.Map        as M
 
 -- My Additions
 import XMonad.Layout.NoBorders
-import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageDocks(avoidStruts, ToggleStruts(..))
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
 
@@ -77,10 +77,13 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_p     ), spawn "dmenu_run")
 
     -- launch albert
-    , ((modm .|. shiftMask, xK_p     ), spawn "albert")
+    --, ((modm .|. shiftMask, xK_p     ), spawn "albert")
     
     -- launch nnn
     , ((modm,               xK_f     ), spawn "xterm -e nnn")
+    
+    -- Toggle hide bar
+    ,((modm, xK_b     ), sendMessage ToggleStruts)
 
     -- close focused window
     , ((modm .|. shiftMask, xK_c     ), kill)
