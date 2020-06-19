@@ -78,6 +78,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- launch albert
     , ((modm .|. shiftMask, xK_p     ), spawn "albert")
+    
+    -- launch nnn
+    , ((modm,               xK_f     ), spawn "$TERM -e nnn")
 
     -- close focused window
     , ((modm .|. shiftMask, xK_c     ), kill)
