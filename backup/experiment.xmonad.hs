@@ -229,7 +229,9 @@ myManageHook = composeAll
     , className =? "Gimp"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "mpv"       --> doIgnore
-    , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat]
+    , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat
+    , title =? "Oracle VM VirtualBox Manager"     --> doFloat
+    , className =? "Oracle VM VirtualBox Manager" --> doShift  ( myWorkspaces !! 5)]
 
 ------------------------------------------------------------------------
 -- Event handling
