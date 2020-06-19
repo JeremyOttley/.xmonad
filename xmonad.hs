@@ -246,8 +246,8 @@ myManageHook = composeAll
 -- return (All True) if the default handler is to be run afterwards. To
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
-myEventHook = mempty
-
+myEventHook = handleEventHook def <+> fullscreenEventHook
+-- mempty
 ------------------------------------------------------------------------
 -- Status bars and logging
 
@@ -270,6 +270,7 @@ myStartupHook = do
 	  spawnOnce "feh --bg-scale ~/wallpaper.jpg"
           spawnOnce "emacs25 --daemon &"
           spawnOnce "export $(dbus-launch)"
+	  spawnOnce "export EDITOR=/home/jottley/bin/em"
 
 
 ------------------------------------------------------------------------
