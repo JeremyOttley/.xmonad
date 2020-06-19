@@ -37,7 +37,17 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
-     auto-completion
+     (auto-completion
+            :variables
+            auto-completion-enable-snippets-in-popup t
+            auto-completion-return-key-behavior nil
+            auto-completion-tab-key-behavior 'cycle
+            auto-completion-private-snippets-directory "~/.spacemacs.d/snippets/"
+            auto-completion-enable-help-tooltip 'manual
+            :disabled-for erc)
+     (ibuffer :variables ibuffer-group-buffers-by nil)
+     pandoc
+     pdf-tools
      emacs-lisp
      git
      org
@@ -51,6 +61,7 @@ values."
             shell-default-height 30
             shell-default-position 'bottom
             shell-defult-shell 'eshell)
+     ;;exwm
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
