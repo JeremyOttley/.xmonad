@@ -19,6 +19,7 @@ import XMonad.Layout.NoBorders
 import XMonad.Hooks.ManageDocks(avoidStruts, ToggleStruts(..))
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
+import XMonad.Actions.GridSelect
 
 myFont :: String
 myFont = "xft:Source Code Pro:bold:pixelsize=13"
@@ -81,8 +82,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch nnn
     , ((modm,               xK_f     ), spawn "xterm -e nnn")
     
-    -- Toggle hide bar
-    ,((modm, xK_b     ), sendMessage ToggleStruts)
+    -- GridSelect
+    , ((modm, xK_s), spawnSelected defaultGSConfig ["xterm","gmplayer","gvim"])
 
     -- close focused window
     , ((modm .|. shiftMask, xK_c     ), kill)
@@ -127,16 +128,16 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_t     ), withFocused $ windows . W.sink)
 
     -- Increment the number of windows in the master area
-    , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
+    --, ((modm              , xK_comma ), sendMessage (IncMasterN 1))
 
     -- Deincrement the number of windows in the master area
-    , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
+    --, ((modm              , xK_period), sendMessage (IncMasterN (-1)))
 
     -- Toggle the status bar gap
     -- Use this binding with avoidStruts from Hooks.ManageDocks.
     -- See also the statusBar function from Hooks.DynamicLog.
     --
-    -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
+    , ((modm              , xK_b     ), sendMessage ToggleStruts)
 
     -- Quit xmonad
     , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
@@ -264,7 +265,7 @@ myLogHook = return ()
 -- By default, do nothing.
 myStartupHook :: X ()
 myStartupHook = do
-          spawnOnce "picom &"
+          spawnOnce "picom --config /home/jottley/.config/picom/picom.conf &"
 	  spawnOnce "feh --bg-scale ~/wallpaper.jpg"
           spawnOnce "emacs25 --daemon &"
           spawnOnce "export $(dbus-launch)"
