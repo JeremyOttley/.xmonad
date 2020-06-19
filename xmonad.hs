@@ -83,7 +83,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_f     ), spawn "xterm -e nnn")
     
     -- GridSelect: find proper names for each with xprop
-    , ((modm, xK_s), spawnSelected defaultGSConfig ["joplin", "idea", "discord", "acrobat", "gimp", "spotify", "firefox"])
+    , ((modm, xK_s), spawnSelected defaultGSConfig ["joplin-james-carroll.joplin", "intellij-idea-community", "discord", "acrobat", "gimp", "spotify", "firefox", "google-chrome-stable", "onlyoffice"])
 
     -- close focused window
     , ((modm .|. shiftMask, xK_c     ), kill)
