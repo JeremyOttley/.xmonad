@@ -23,7 +23,7 @@ import XMonad.Actions.GridSelect
 import XMonad.Hooks.EwmhDesktops
 
 myFont :: String
-myFont = "xft:Source Code Pro:bold:pixelsize=13"
+myFont = "xft:JetBrains Mono:bold:pixelsize=13"
 
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
