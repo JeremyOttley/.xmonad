@@ -44,6 +44,12 @@ alias md='mkdir -p'
 
 export PATH=$HOME/bin:$PATH
 
+function gitup {
+  git add --all
+  git commit -m "new commit"
+  git push -u origin master
+}
+
 ## EXPERIMENTAL ##
 
 #Configure Input Method
