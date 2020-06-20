@@ -258,8 +258,8 @@ myManageHook = composeAll
 -- return (All True) if the default handler is to be run afterwards. To
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
-myEventHook = handleEventHook def <+> fullscreenEventHook
--- mempty
+--myEventHook = handleEventHook def <+> fullscreenEventHook
+myEventHook = mempty
 ------------------------------------------------------------------------
 -- Status bars and logging
 
