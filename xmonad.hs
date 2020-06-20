@@ -95,6 +95,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- GridSelect: find proper names for each with xprop
     , ((modm, xK_s), spawnSelected defaultGSConfig ["joplin-james-carroll.joplin", "intellij-idea-community", "discord", "acrobat", "gimp", "spotify", "firefox", "google-chrome-stable", "onlyoffice"])
 
+    -- Lockscreen
+    , ((modm .|. shiftMask, xK_l     ), spawn "betterlockscreen --lock blur")
+
     -- close focused window
     , ((modm .|. shiftMask, xK_c     ), kill)
 
