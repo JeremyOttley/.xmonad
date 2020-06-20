@@ -29,7 +29,7 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
 import XMonad.Actions.GridSelect
-import XMonad.Hooks.EwmhDesktops
+--import XMonad.Hooks.EwmhDesktops
 
 myFont :: String
 myFont = "xft:JetBrains Mono:bold:pixelsize=13"
@@ -294,7 +294,7 @@ myStartupHook = do
 
 main = do
   xmproc <- spawnPipe "xmobar -x 0 /home/jottley/.config/xmobar/xmobarrc"
-  xmonad $ ewmh docks defaults
+  xmonad $ docks defaults --ewmh
 
 -- A structure containing your configuration settings, overriding
 -- fields in the default config. Any you don't override, will
