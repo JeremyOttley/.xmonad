@@ -29,7 +29,7 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
 import XMonad.Actions.GridSelect
---import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.EwmhDesktops
 
 myFont :: String
 myFont = "xft:JetBrains Mono:bold:pixelsize=13"
@@ -93,7 +93,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_f     ), spawn "xterm -e nnn")
     
     -- GridSelect: find proper names for each with xprop
-    , ((modm, xK_s), spawnSelected defaultGSConfig ["joplin-james-carroll.joplin", "intellij-idea-community", "discord", "acrobat", "gimp", "spotify", "firefox", "google-chrome-stable", "onlyoffice"])
+    , ((modm .|. shiftMask, xK_p), spawnSelected defaultGSConfig ["joplin-james-carroll.joplin", "intellij-idea-community", "discord", "acrobat", "gimp", "spotify", "firefox", "google-chrome-stable", "onlyoffice"])
 
     -- Lockscreen
     , ((modm .|. shiftMask, xK_l     ), spawn "betterlockscreen --lock blur")
@@ -259,7 +259,8 @@ myManageHook = composeAll
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
 --myEventHook = handleEventHook def <+> fullscreenEventHook
-myEventHook = mempty
+--myEventHook = mempty
+myEventHook = ewmhDesktopsEventHook
 ------------------------------------------------------------------------
 -- Status bars and logging
 
@@ -294,7 +295,7 @@ myStartupHook = do
 
 main = do
   xmproc <- spawnPipe "xmobar -x 0 /home/jottley/.config/xmobar/xmobarrc"
-  xmonad $ docks defaults --ewmh
+  xmonad $ defaults
 
 -- A structure containing your configuration settings, overriding
 -- fields in the default config. Any you don't override, will
@@ -302,7 +303,7 @@ main = do
 --
 -- No need to modify this.
 --
-defaults = def {
+defaults = ewmh $ docks def {
       -- simple stuff
         terminal           = myTerminal,
         focusFollowsMouse  = myFocusFollowsMouse,
