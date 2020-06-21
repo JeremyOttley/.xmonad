@@ -278,8 +278,8 @@ myLogHook = return ()
 -- By default, do nothing.
 myStartupHook :: X ()
 myStartupHook = do
-          spawnOnce "picom -b"
 	  spawnOnce "source /home/jottley/.fehbg"
+          spawnOnce "picom -b"
           spawnOnce "emacs25 --daemon > /dev/null 2>&1"
           spawnOnce "export $(dbus-launch)"
 	  spawnOnce "export EDITOR=/home/jottley/bin/em"
