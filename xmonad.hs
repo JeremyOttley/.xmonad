@@ -248,7 +248,7 @@ myManageHook = composeAll
     , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat
     , title =? "Oracle VM VirtualBox Manager"     --> doFloat
     , className =? "Oracle VM VirtualBox Manager" --> doShift  ( myWorkspaces !! 5)
-    , className =? "Spotify" --> doShift ( myWorkspaces !! 5)]
+    , className =? "Spotify Premium" --> doShift ( myWorkspaces !! 5)]
     
 ------------------------------------------------------------------------
 -- Event handling
