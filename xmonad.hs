@@ -30,7 +30,7 @@ import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
 import XMonad.Actions.GridSelect
 import XMonad.Hooks.EwmhDesktops
-import XMonad.Utils.NamedScratchpad
+import XMonad.Util.NamedScratchpad
 
 myScratchPads = [ NS "terminal" spawnTerm (title =? "scratchpad") (customFloating $ W.RationalRect (0.95 -0.9) (0.95 -0.9) (0.9) (0.9)) ]
 	where
