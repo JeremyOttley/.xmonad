@@ -30,6 +30,11 @@ import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
 import XMonad.Actions.GridSelect
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Utils.NamedScratchpad
+
+myScratchPads = [ NS "terminal" spawnTerm (title =? "scratchpad") (customFloating $ W.RationalRect (0.95 -0.9) (0.95 -0.9) (0.9) (0.9)) ]
+	where
+	spawnTerm = myTerminal ++ " --title scratchpad"
 
 myFont :: String
 myFont = "xft:JetBrains Mono:bold:pixelsize=13"
@@ -89,8 +94,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch albert
     --, ((modm .|. shiftMask, xK_p     ), spawn "albert")
     
+    -- Scratchpads
+    , ((modm .|. controlMask, xK_Return ), namedScratchpadAction myScratchPads "terminal")
+    
     -- launch nnn
-    , ((modm,               xK_f     ), spawn "xterm -e nnn")
+    , ((modm,               xK_f     ), spawn "alacritty -e nnn")
     
     -- GridSelect: find proper names for each with xprop
     , ((modm .|. shiftMask, xK_p), spawnSelected defaultGSConfig ["joplin-james-carroll.joplin", "intellij-idea-community", "discord", "acrobat", "gimp", "spotify", "firefox", "google-chrome-stable", "onlyoffice"])
@@ -247,8 +255,7 @@ myManageHook = composeAll
     , resource  =? "mpv"       --> doIgnore
     , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat
     , title =? "Oracle VM VirtualBox Manager"     --> doFloat
-    , className =? "Oracle VM VirtualBox Manager" --> doShift  ( myWorkspaces !! 5)
-    , className =? "spotify" --> doShift ( myWorkspaces !! 5)]
+    , className =? "Oracle VM VirtualBox Manager" --> doShift  ( myWorkspaces !! 5) ] <+> namedScratchpadManageHook myScratchPads
     
 ------------------------------------------------------------------------
 -- Event handling
