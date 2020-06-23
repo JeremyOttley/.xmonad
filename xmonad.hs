@@ -282,7 +282,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = smartBorders $ avoidStruts (tiled ||| Mirror Tall ||| mygrid ||| Full)
+myLayout = smartBorders $ avoidStruts (tiled ||| Mirror tiled ||| mygrid ||| Full)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
