@@ -38,7 +38,10 @@ import Data.List
 import Data.Tree
 import qualified XMonad.Actions.TreeSelect as TS
 import XMonad.Hooks.WorkspaceHistory
-import XMonad.Layout.Grid
+--import XMonad.Layout.Grid
+import XMonad.Layout.GridVariants
+import XMonad.Layout.MultiToggle
+import XMonad.Layout.MultiToggle.Instances
 
 tsDefaultConfig :: TS.TSConfig a
 tsDefaultConfig = TS.TSConfig { TS.ts_hidechildren = True
@@ -150,6 +153,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- TreeSelect
     , ((modm .|. shiftMask, xK_q ), treeselectAction TS.tsDefaultConfig)
+    
+     -- Full Size current window
+    , ((modm,               xK_f     ), sendMessage $ Toggle NBFULL)
 
     -- launch albert
     --, ((modm .|. shiftMask, xK_p     ), spawn "albert")
@@ -158,7 +164,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. controlMask, xK_Return ), namedScratchpadAction myScratchPads "terminal")
     
     -- launch nnn
-    , ((modm,               xK_f     ), spawn "alacritty -e nnn")
+    , ((modm,               xK_n     ), spawn "alacritty -e nnn")
     
     -- GridSelect: find proper names for each with xprop
     , ((modm .|. shiftMask, xK_p), spawnSelected defaultGSConfig ["joplin-james-carroll.joplin", "intellij-idea-community", "discord", "acrobat", "gimp", "spotify", "firefox", "google-chrome-stable", "onlyoffice"])
@@ -176,7 +182,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
 
     -- Resize viewed windows to the correct size
-    , ((modm,               xK_n     ), refresh)
+    --, ((modm,               xK_n     ), refresh)
 
     -- Move focus to the next window
     , ((modm,               xK_Tab   ), windows W.focusDown)
@@ -279,7 +285,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = smartBorders $ avoidStruts (tiled ||| Mirror Tall ||| Grid ||| Full)
+myLayout = smartBorders $ avoidStruts (tiled ||| Mirror Tall ||| SplitGrid L 2 3 (2/3) (16/10) (5/100) ||| Full)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -388,7 +394,7 @@ defaults = ewmh $ docks def {
         mouseBindings      = myMouseBindings,
 
       -- hooks, layouts
-        layoutHook         = myLayout,
+        layoutHook         = mkToggle (single NBFULL) $ myLayout,
         manageHook         = myManageHook,
         handleEventHook    = myEventHook,
         logHook            = myLogHook,
