@@ -16,7 +16,7 @@
 -- Normally, you'd only override those defaults you care about.
 --
 
-import XMonad hiding (Tall) -- hiding Tall to use Tall from HintedTile
+import XMonad
 import Data.Monoid
 import System.Exit
 
@@ -38,8 +38,7 @@ import Data.List
 import Data.Tree
 import qualified XMonad.Actions.TreeSelect as TS
 import XMonad.Hooks.WorkspaceHistory
-import XMonad.Layout.HintedTile
-
+import XMonad.Layout.Grid
 
 tsDefaultConfig :: TS.TSConfig a
 tsDefaultConfig = TS.TSConfig { TS.ts_hidechildren = True
@@ -280,10 +279,10 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = smartBorders $ avoidStruts (hintedTile Tall ||| Mirror hintedTile Tall ||| Full)
+myLayout = smartBorders $ avoidStruts (tiled ||| Mirror Tall ||| Grid ||| Full)
   where
      -- default tiling algorithm partitions the screen into two panes
-     hintedTile   = HintedTile nmaster delta ratio TopLeft
+     tiled   = Tall nmaster delta ratio
 
      -- The default number of windows in the master pane
      nmaster = 1
