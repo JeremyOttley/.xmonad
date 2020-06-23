@@ -35,6 +35,31 @@ import XMonad.Prompt
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Man
 import Data.List
+import Data.Tree
+import qualified XMonad.Actions.TreeSelect as TS
+import XMonad.Hooks.WorkspaceHistory
+
+tsDefaultConfig :: TS.TSConfig a
+tsDefaultConfig = TS.TSConfig { TS.ts_hidechildren = True
+                              , TS.ts_background   = 0xdd292d3e
+                              , TS.ts_font         = "xft:JetBrains Mono:bold:pixelsize=13"
+                              , TS.ts_node         = (0xffd0d0d0, 0xff202331)
+                              , TS.ts_nodealt      = (0xffd0d0d0, 0xff292d3e)
+                              , TS.ts_highlight    = (0xffffffff, 0xff755999)
+                              , TS.ts_extra        = 0xffd0d0d0
+                              , TS.ts_node_width   = 200
+                              , TS.ts_node_height  = 20
+                              , TS.ts_originX      = 0
+                              , TS.ts_originY      = 0
+                              , TS.ts_indent       = 80
+                              }
+
+treeselectAction :: TS.TSConfig (X ()) -> X ()
+treeselectAction a = TS.treeselectAction a
+   [ Node (TS.TSNode "Shutdown" "Poweroff the system" (spawn "shutdown -a now")) []
+   , Node (TS.TSNode "Retart" "Reboot the system" (spawn "reboot")) []
+   , Node (TS.TSNode "Logout" "Logout of XMonad" (io (exitWith ExitSuccess))) []
+   ]
 
 myXPConfig :: XPConfig
 myXPConfig = def
@@ -122,6 +147,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_p     ), shellPrompt myXPConfig)   
     , ((modm .|. shiftMask, xK_m     ), manPrompt myXPConfig)
 
+    -- TreeSelect
+    , ((modm .|. shiftMask, xK_q ), treeselectAction TS.tsDefaultConfig)
 
     -- launch albert
     --, ((modm .|. shiftMask, xK_p     ), spawn "albert")
@@ -193,7 +220,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm              , xK_b     ), sendMessage ToggleStruts)
 
     -- Quit xmonad
-    , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
+    --, ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
 
     -- Restart xmonad
     , ((modm              , xK_q     ), spawn "xmonad --recompile; xmonad --restart")
@@ -319,11 +346,11 @@ myLogHook = return ()
 -- By default, do nothing.
 myStartupHook :: X ()
 myStartupHook = do
-	  spawnOnce "source /home/jottley/.fehbg"
-          spawnOnce "picom -b"
-          spawnOnce "emacs25 --daemon > /dev/null 2>&1"
-          spawnOnce "export $(dbus-launch)"
-	  spawnOnce "export EDITOR=/home/jottley/bin/em"
+              spawnOnce "source /home/jottley/.fehbg"
+              spawnOnce "picom -b"
+              spawnOnce "/usr/bin/emacs25 --daemon > /dev/null 2>&1"
+              spawnOnce "export $(dbus-launch)"
+              spawnOnce "export EDITOR=/home/jottley/bin/em"
 
 
 ------------------------------------------------------------------------
