@@ -348,9 +348,9 @@ myStartupHook :: X ()
 myStartupHook = do
               spawnOnce "source /home/jottley/.fehbg"
 	      --spawnOnce "/home/jottley/.xmonad/utils/setbg"
-              spawnOnce "picom -b"
-              spawnOnce "/usr/bin/emacs25 --daemon > /dev/null 2>&1"
-              spawnOnce "export $(dbus-launch)"
+              spawnOnce "picom &"
+              spawnOnce "emacs25 --daemon > /dev/null 2>&1"
+              --spawnOnce "export $(dbus-launch)"
               spawnOnce "export EDITOR=/home/jottley/bin/em"
 
 
