@@ -39,9 +39,8 @@ import Data.Tree
 import qualified XMonad.Actions.TreeSelect as TS
 import XMonad.Hooks.WorkspaceHistory
 --import XMonad.Layout.Grid
-import XMonad.Layout.GridVariants
-import XMonad.Layout.MultiToggle
-import XMonad.Layout.MultiToggle.Instances
+import qualified XMonad.Layout.GridVariants as GV
+
 
 tsDefaultConfig :: TS.TSConfig a
 tsDefaultConfig = TS.TSConfig { TS.ts_hidechildren = True
@@ -153,9 +152,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- TreeSelect
     , ((modm .|. shiftMask, xK_q ), treeselectAction TS.tsDefaultConfig)
-    
-     -- Full Size current window
-    , ((modm,               xK_f     ), sendMessage $ Toggle NBFULL)
+   
 
     -- launch albert
     --, ((modm .|. shiftMask, xK_p     ), spawn "albert")
@@ -164,7 +161,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. controlMask, xK_Return ), namedScratchpadAction myScratchPads "terminal")
     
     -- launch nnn
-    , ((modm,               xK_n     ), spawn "alacritty -e nnn")
+    , ((modm,               xK_f     ), spawn "alacritty -e nnn")
     
     -- GridSelect: find proper names for each with xprop
     , ((modm .|. shiftMask, xK_p), spawnSelected defaultGSConfig ["joplin-james-carroll.joplin", "intellij-idea-community", "discord", "acrobat", "gimp", "spotify", "firefox", "google-chrome-stable", "onlyoffice"])
@@ -285,7 +282,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = smartBorders $ avoidStruts (tiled ||| Mirror Tall ||| SplitGrid L 2 3 (2/3) (16/10) (5/100) ||| Full)
+myLayout = smartBorders $ avoidStruts (tiled ||| Mirror Tall ||| mygrid ||| Full)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -298,6 +295,7 @@ myLayout = smartBorders $ avoidStruts (tiled ||| Mirror Tall ||| SplitGrid L 2 3
 
      -- Percent of screen to increment by when resizing panes
      delta   = 3/100
+     mygrid  = GV.SplitGrid GV.L 2 3 (2/3) (16/10) (5/100)
 
 ------------------------------------------------------------------------
 -- Window rules:
@@ -394,7 +392,7 @@ defaults = ewmh $ docks def {
         mouseBindings      = myMouseBindings,
 
       -- hooks, layouts
-        layoutHook         = mkToggle (single NBFULL) $ myLayout,
+        layoutHook         = myLayout,
         manageHook         = myManageHook,
         handleEventHook    = myEventHook,
         logHook            = myLogHook,
