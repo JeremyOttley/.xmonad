@@ -31,6 +31,33 @@ import XMonad.Util.SpawnOnce
 import XMonad.Actions.GridSelect
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Util.NamedScratchpad
+import XMonad.Prompt
+import XMonad.Prompt.Shell (shellPrompt)
+import XMonad.Prompt.Man
+import Data.List
+
+myXPConfig :: XPConfig
+myXPConfig = def
+      { font                = "xft:JetBrains Mono:size=9"
+      , bgColor             = "#292d3e"
+      , fgColor             = "#d0d0d0"
+      , bgHLight            = "#c792ea"
+      , fgHLight            = "#000000"
+      , borderColor         = "#535974"
+      , promptBorderWidth   = 0
+      , position            = Top
+--    , position            = CenteredAt { xpCenterY = 0.3, xpWidth = 0.3 }
+      , height              = 20
+      , historySize         = 256
+      , historyFilter       = id
+      , defaultText         = []
+      , autoComplete        = Nothing  -- set <Just 100000> for .1 sec
+      , showCompletionOnTab = False
+      , searchPredicate     = isPrefixOf
+      , alwaysHighlight     = True
+      , maxComplRows        = Nothing      -- set to Just 5 for 5 rows
+      }
+
 
 myScratchPads = [ NS "terminal" spawnTerm (title =? "scratchpad") (customFloating $ W.RationalRect (0.95 -0.9) (0.95 -0.9) (0.9) (0.9)) ]
 	where
@@ -89,7 +116,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
 
     -- launch dmenu
-    , ((modm,               xK_p     ), spawn "dmenu_run")
+    --, ((modm,               xK_p     ), spawn "dmenu_run")
+    
+    -- XPrompt
+    , ((modm,               xK_p     ), shellPrompt myXPConfig)   
+    , ((modm .|. shiftMask, xK_m     ), manPrompt myXPConfig)
+
 
     -- launch albert
     --, ((modm .|. shiftMask, xK_p     ), spawn "albert")
