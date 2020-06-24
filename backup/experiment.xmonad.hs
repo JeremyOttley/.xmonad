@@ -1,3 +1,12 @@
+---------------------------------------------------------------------------
+--                                                                       --
+--     _|      _|  _|      _|                                      _|    --
+--       _|  _|    _|_|  _|_|    _|_|    _|_|_|      _|_|_|    _|_|_|    --
+--         _|      _|  _|  _|  _|    _|  _|    _|  _|    _|  _|    _|    --
+--       _|  _|    _|      _|  _|    _|  _|    _|  _|    _|  _|    _|    --
+--     _|      _|  _|      _|    _|_|    _|    _|    _|_|_|    _|_|_|    --
+--                                                                       --
+---------------------------------------------------------------------------
 --
 -- xmonad example config file.
 --
@@ -19,10 +28,71 @@ import XMonad.Layout.NoBorders
 import XMonad.Hooks.ManageDocks
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
+import XMonad.Actions.GridSelect
+import XMonad.Hooks.EwmhDesktops
+import XMonad.Util.NamedScratchpad
+import XMonad.Prompt
+import XMonad.Prompt.Shell (shellPrompt)
+import XMonad.Prompt.Man
+import Data.List
+import Data.Tree
+import qualified XMonad.Actions.TreeSelect as TS
+import XMonad.Hooks.WorkspaceHistory
+--import XMonad.Layout.Grid
+import qualified XMonad.Layout.GridVariants as GV
 
+
+tsDefaultConfig :: TS.TSConfig a
+tsDefaultConfig = TS.TSConfig { TS.ts_hidechildren = True
+                              , TS.ts_background   = 0xdd292d3e
+                              , TS.ts_font         = "xft:JetBrains Mono:bold:pixelsize=13"
+                              , TS.ts_node         = (0xffd0d0d0, 0xff202331)
+                              , TS.ts_nodealt      = (0xffd0d0d0, 0xff292d3e)
+                              , TS.ts_highlight    = (0xffffffff, 0xff755999)
+                              , TS.ts_extra        = 0xffd0d0d0
+                              , TS.ts_node_width   = 200
+                              , TS.ts_node_height  = 20
+                              , TS.ts_originX      = 0
+                              , TS.ts_originY      = 0
+                              , TS.ts_indent       = 80
+                              }
+
+treeselectAction :: TS.TSConfig (X ()) -> X ()
+treeselectAction a = TS.treeselectAction a
+   [ Node (TS.TSNode "Shutdown" "Poweroff the system" (spawn "shutdown -a now")) []
+   , Node (TS.TSNode "Retart" "Reboot the system" (spawn "reboot")) []
+   , Node (TS.TSNode "Logout" "Logout of XMonad" (io (exitWith ExitSuccess))) []
+   ]
+
+myXPConfig :: XPConfig
+myXPConfig = def
+      { font                = "xft:JetBrains Mono:size=9"
+      , bgColor             = "#292d3e"
+      , fgColor             = "#d0d0d0"
+      , bgHLight            = "#c792ea"
+      , fgHLight            = "#000000"
+      , borderColor         = "#535974"
+      , promptBorderWidth   = 0
+      , position            = Top
+--    , position            = CenteredAt { xpCenterY = 0.3, xpWidth = 0.3 }
+      , height              = 20
+      , historySize         = 256
+      , historyFilter       = id
+      , defaultText         = []
+      , autoComplete        = Nothing  -- set <Just 100000> for .1 sec
+      , showCompletionOnTab = False
+      , searchPredicate     = isPrefixOf
+      , alwaysHighlight     = True
+      , maxComplRows        = Nothing      -- set to Just 5 for 5 rows
+      }
+
+
+myScratchPads = [ NS "terminal" spawnTerm (title =? "scratchpad") (customFloating $ W.RationalRect (0.95 -0.9) (0.95 -0.9) (0.9) (0.9)) ]
+	where
+	spawnTerm = myTerminal ++ " --title scratchpad"
 
 myFont :: String
-myFont = "xft:Source Code Pro:bold:pixelsize=13"
+myFont = "xft:JetBrains Mono:bold:pixelsize=13"
 
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
@@ -62,8 +132,8 @@ myWorkspaces    = ["1","2","3","4","5"]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
-myNormalBorderColor  = "#dddddd"
-myFocusedBorderColor = "#ff0000"
+myNormalBorderColor  = "#292d3e"
+myFocusedBorderColor = "#bbc5ff"
 
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
@@ -74,13 +144,30 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
 
     -- launch dmenu
-    , ((modm,               xK_p     ), spawn "dmenu_run")
+    --, ((modm,               xK_p     ), spawn "dmenu_run")
+    
+    -- XPrompt
+    , ((modm,               xK_p     ), shellPrompt myXPConfig)   
+    , ((modm .|. shiftMask, xK_m     ), manPrompt myXPConfig)
+
+    -- TreeSelect
+    , ((modm .|. shiftMask, xK_q ), treeselectAction TS.tsDefaultConfig)
+   
 
     -- launch albert
-    , ((modm .|. shiftMask, xK_p     ), spawn "albert")
+    --, ((modm .|. shiftMask, xK_p     ), spawn "albert")
+    
+    -- Scratchpads
+    , ((modm .|. controlMask, xK_Return ), namedScratchpadAction myScratchPads "terminal")
     
     -- launch nnn
     , ((modm,               xK_f     ), spawn "alacritty -e nnn")
+    
+    -- GridSelect: find proper names for each with xprop
+    , ((modm .|. shiftMask, xK_p), spawnSelected defaultGSConfig ["joplin-james-carroll.joplin", "intellij-idea-community", "discord", "acrobat", "gimp", "spotify", "firefox", "google-chrome-stable", "onlyoffice"])
+
+    -- Lockscreen
+    , ((modm .|. shiftMask, xK_l     ), spawn "betterlockscreen --lock blur")
 
     -- close focused window
     , ((modm .|. shiftMask, xK_c     ), kill)
@@ -92,7 +179,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
 
     -- Resize viewed windows to the correct size
-    , ((modm,               xK_n     ), refresh)
+    --, ((modm,               xK_n     ), refresh)
 
     -- Move focus to the next window
     , ((modm,               xK_Tab   ), windows W.focusDown)
@@ -125,19 +212,19 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_t     ), withFocused $ windows . W.sink)
 
     -- Increment the number of windows in the master area
-    , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
+    --, ((modm              , xK_comma ), sendMessage (IncMasterN 1))
 
     -- Deincrement the number of windows in the master area
-    , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
+    --, ((modm              , xK_period), sendMessage (IncMasterN (-1)))
 
     -- Toggle the status bar gap
     -- Use this binding with avoidStruts from Hooks.ManageDocks.
     -- See also the statusBar function from Hooks.DynamicLog.
     --
-    -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
+    , ((modm              , xK_b     ), sendMessage ToggleStruts)
 
     -- Quit xmonad
-    , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
+    --, ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
 
     -- Restart xmonad
     , ((modm              , xK_q     ), spawn "xmonad --recompile; xmonad --restart")
@@ -195,7 +282,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts (tiled ||| Mirror tiled ||| noBorders Full)
+myLayout = smartBorders $ avoidStruts (tiled ||| Mirror tiled ||| mygrid ||| Full)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -208,6 +295,7 @@ myLayout = avoidStruts (tiled ||| Mirror tiled ||| noBorders Full)
 
      -- Percent of screen to increment by when resizing panes
      delta   = 3/100
+     mygrid  = GV.SplitGrid GV.L 2 3 (2/3) (16/10) (5/100)
 
 ------------------------------------------------------------------------
 -- Window rules:
@@ -231,8 +319,8 @@ myManageHook = composeAll
     , resource  =? "mpv"       --> doIgnore
     , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat
     , title =? "Oracle VM VirtualBox Manager"     --> doFloat
-    , className =? "Oracle VM VirtualBox Manager" --> doShift  ( myWorkspaces !! 5)]
-
+    , className =? "Oracle VM VirtualBox Manager" --> doShift  ( myWorkspaces !! 5) ] <+> namedScratchpadManageHook myScratchPads
+    
 ------------------------------------------------------------------------
 -- Event handling
 
@@ -242,8 +330,9 @@ myManageHook = composeAll
 -- return (All True) if the default handler is to be run afterwards. To
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
-myEventHook = mempty
-
+--myEventHook = handleEventHook def <+> fullscreenEventHook
+--myEventHook = mempty
+myEventHook = ewmhDesktopsEventHook
 ------------------------------------------------------------------------
 -- Status bars and logging
 
@@ -262,10 +351,12 @@ myLogHook = return ()
 -- By default, do nothing.
 myStartupHook :: X ()
 myStartupHook = do
-          --spawnOnce "nitrogen --restore &"
-          --spawnOnce "picom &"
-          spawnOnce "emacs --daemon &"
-          spawnOnce "export $(dbus-launch)"
+              spawnOnce "source /home/jottley/.fehbg"
+	      --spawnOnce "/home/jottley/.xmonad/utils/setbg"
+              spawnOnce "picom &"
+              spawnOnce "emacs25 --daemon > /dev/null 2>&1"
+              --spawnOnce "export $(dbus-launch)"
+              spawnOnce "export EDITOR=/home/jottley/bin/em"
 
 
 ------------------------------------------------------------------------
@@ -277,7 +368,7 @@ myStartupHook = do
 
 main = do
   xmproc <- spawnPipe "xmobar -x 0 /home/jottley/.config/xmobar/xmobarrc"
-  xmonad $ docks defaults
+  xmonad $ defaults
 
 -- A structure containing your configuration settings, overriding
 -- fields in the default config. Any you don't override, will
@@ -285,7 +376,7 @@ main = do
 --
 -- No need to modify this.
 --
-defaults = def {
+defaults = ewmh $ docks def {
       -- simple stuff
         terminal           = myTerminal,
         focusFollowsMouse  = myFocusFollowsMouse,
