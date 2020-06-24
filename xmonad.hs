@@ -8,88 +8,58 @@
 --                                                                       --
 ---------------------------------------------------------------------------
 --
--- xmonad example config file.
---
--- A template showing all available configuration hooks,
--- and how to override the defaults in your own xmonad.hs conf file.
---
--- Normally, you'd only override those defaults you care about.
---
+-- The xmonad configuration of J. M. Ottley
+-- My Github:  http://www.github.com/jeremyottley/
+-- For more information on Xmonad, visit: https://xmonad.org
 
+------------------------------------------------------------------------
+-- IMPORTS
+------------------------------------------------------------------------
+    -- Base
 import XMonad
 import Data.Monoid
 import System.Exit
-
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
--- My Additions
-import XMonad.Layout.NoBorders
-import XMonad.Hooks.ManageDocks
-import XMonad.Util.Run
-import XMonad.Util.SpawnOnce
+    -- Actions
 import XMonad.Actions.GridSelect
+import qualified XMonad.Actions.TreeSelect as TS
+
+    -- Data
+import Data.List
+import Data.Tree
+
+    -- Hooks
+import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.EwmhDesktops
-import XMonad.Util.NamedScratchpad
+import XMonad.Hooks.WorkspaceHistory
+
+    -- Layouts
+--import XMonad.Layout.Grid
+import qualified XMonad.Layout.GridVariants as GV
+--import XMonad.Layout.Tabbed
+
+    -- Layouts modifiers
+import XMonad.Layout.NoBorders
+--import XMonad.Layout.MultiToggle (mkToggle, single, EOT(EOT), (??))
+--import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBORDERS))
+--import qualified XMonad.Layout.ToggleLayouts as T (toggleLayouts, ToggleLayout(Toggle))
+--import qualified XMonad.Layout.MultiToggle as MT (Toggle(..))
+
+    -- Prompt
 import XMonad.Prompt
 import XMonad.Prompt.Shell (shellPrompt)
 import XMonad.Prompt.Man
-import Data.List
-import Data.Tree
-import qualified XMonad.Actions.TreeSelect as TS
-import XMonad.Hooks.WorkspaceHistory
---import XMonad.Layout.Grid
-import qualified XMonad.Layout.GridVariants as GV
 
+    -- Utilities
+import XMonad.Util.Run
+import XMonad.Util.SpawnOnce
+import XMonad.Util.NamedScratchpad
 
-tsDefaultConfig :: TS.TSConfig a
-tsDefaultConfig = TS.TSConfig { TS.ts_hidechildren = True
-                              , TS.ts_background   = 0xdd292d3e
-                              , TS.ts_font         = "xft:JetBrains Mono:bold:pixelsize=13"
-                              , TS.ts_node         = (0xffd0d0d0, 0xff202331)
-                              , TS.ts_nodealt      = (0xffd0d0d0, 0xff292d3e)
-                              , TS.ts_highlight    = (0xffffffff, 0xff755999)
-                              , TS.ts_extra        = 0xffd0d0d0
-                              , TS.ts_node_width   = 200
-                              , TS.ts_node_height  = 20
-                              , TS.ts_originX      = 0
-                              , TS.ts_originY      = 0
-                              , TS.ts_indent       = 80
-                              }
-
-treeselectAction :: TS.TSConfig (X ()) -> X ()
-treeselectAction a = TS.treeselectAction a
-   [ Node (TS.TSNode "Shutdown" "Poweroff the system" (spawn "shutdown -a now")) []
-   , Node (TS.TSNode "Retart" "Reboot the system" (spawn "reboot")) []
-   , Node (TS.TSNode "Logout" "Logout of XMonad" (io (exitWith ExitSuccess))) []
-   ]
-
-myXPConfig :: XPConfig
-myXPConfig = def
-      { font                = "xft:JetBrains Mono:size=9"
-      , bgColor             = "#292d3e"
-      , fgColor             = "#d0d0d0"
-      , bgHLight            = "#c792ea"
-      , fgHLight            = "#000000"
-      , borderColor         = "#535974"
-      , promptBorderWidth   = 0
-      , position            = Top
---    , position            = CenteredAt { xpCenterY = 0.3, xpWidth = 0.3 }
-      , height              = 20
-      , historySize         = 256
-      , historyFilter       = id
-      , defaultText         = []
-      , autoComplete        = Nothing  -- set <Just 100000> for .1 sec
-      , showCompletionOnTab = False
-      , searchPredicate     = isPrefixOf
-      , alwaysHighlight     = True
-      , maxComplRows        = Nothing      -- set to Just 5 for 5 rows
-      }
-
-
-myScratchPads = [ NS "terminal" spawnTerm (title =? "scratchpad") (customFloating $ W.RationalRect (0.95 -0.9) (0.95 -0.9) (0.9) (0.9)) ]
-	where
-	spawnTerm = myTerminal ++ " --title scratchpad"
+------------------------------------------------------------------------
+-- VARIABLES
+------------------------------------------------------------------------
 
 myFont :: String
 myFont = "xft:JetBrains Mono:bold:pixelsize=13"
@@ -136,6 +106,76 @@ myNormalBorderColor  = "#292d3e"
 myFocusedBorderColor = "#bbc5ff"
 
 ------------------------------------------------------------------------
+-- AUTOSTART
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+-- Startup hook
+
+-- Perform an arbitrary action each time xmonad starts or is restarted
+-- with mod-q.  Used by, e.g., XMonad.Layout.PerWorkspace to initialize
+-- per-workspace layout choices.
+--
+-- By default, do nothing.
+myStartupHook :: X ()
+myStartupHook = do
+	spawnOnce "source /home/jottley/.xmonad/utils/setbg"
+	spawnOnce "picom &"
+	spawnOnce "emacs25 --daemon > /dev/null 2>&1"
+	spawnOnce "export EDITOR=/home/jottley/bin/em"
+
+------------------------------------------------------------------------
+-- XPROMPT SETTINGS
+------------------------------------------------------------------------
+myXPConfig :: XPConfig
+myXPConfig = def
+      { font                = "xft:JetBrains Mono:size=9"
+      , bgColor             = "#292d3e"
+      , fgColor             = "#d0d0d0"
+      , bgHLight            = "#c792ea"
+      , fgHLight            = "#000000"
+      , borderColor         = "#535974"
+      , promptBorderWidth   = 0
+      , position            = Top
+      , height              = 20
+      , historySize         = 256
+      , historyFilter       = id
+      , defaultText         = []
+      , autoComplete        = Nothing  -- set <Just 100000> for .1 sec
+      , showCompletionOnTab = False
+      , searchPredicate     = isPrefixOf
+      , alwaysHighlight     = True
+      , maxComplRows        = Nothing      -- set to Just 5 for 5 rows
+      }
+
+------------------------------------------------------------------------
+-- TREE SELECT
+------------------------------------------------------------------------
+tsDefaultConfig :: TS.TSConfig a
+tsDefaultConfig = TS.TSConfig { TS.ts_hidechildren = True
+                              , TS.ts_background   = 0xdd292d3e
+                              , TS.ts_font         = "xft:JetBrains Mono:bold:pixelsize=13"
+                              , TS.ts_node         = (0xffd0d0d0, 0xff202331)
+                              , TS.ts_nodealt      = (0xffd0d0d0, 0xff292d3e)
+                              , TS.ts_highlight    = (0xffffffff, 0xff755999)
+                              , TS.ts_extra        = 0xffd0d0d0
+                              , TS.ts_node_width   = 200
+                              , TS.ts_node_height  = 20
+                              , TS.ts_originX      = 0
+                              , TS.ts_originY      = 0
+                              , TS.ts_indent       = 80
+                              }
+
+treeselectAction :: TS.TSConfig (X ()) -> X ()
+treeselectAction a = TS.treeselectAction a
+   [ Node (TS.TSNode "Shutdown" "Poweroff the system" (spawn "shutdown -a now")) []
+   , Node (TS.TSNode "Retart" "Reboot the system" (spawn "reboot")) []
+   , Node (TS.TSNode "Logout" "Logout of XMonad" (io (exitWith ExitSuccess))) []
+   ]
+
+------------------------------------------------------------------------
+-- KEYBINDINGS
+------------------------------------------------------------------------
+------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
 --
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
@@ -145,24 +185,24 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- launch dmenu
     --, ((modm,               xK_p     ), spawn "dmenu_run")
-    
+
     -- XPrompt
-    , ((modm,               xK_p     ), shellPrompt myXPConfig)   
+    , ((modm,               xK_p     ), shellPrompt myXPConfig)
     , ((modm .|. shiftMask, xK_m     ), manPrompt myXPConfig)
 
     -- TreeSelect
     , ((modm .|. shiftMask, xK_q ), treeselectAction TS.tsDefaultConfig)
-   
+
 
     -- launch albert
     --, ((modm .|. shiftMask, xK_p     ), spawn "albert")
-    
+
     -- Scratchpads
     , ((modm .|. controlMask, xK_Return ), namedScratchpadAction myScratchPads "terminal")
-    
+
     -- launch nnn
     , ((modm,               xK_f     ), spawn "alacritty -e nnn")
-    
+
     -- GridSelect: find proper names for each with xprop
     , ((modm .|. shiftMask, xK_p), spawnSelected defaultGSConfig ["joplin-james-carroll.joplin", "intellij-idea-community", "discord", "acrobat", "gimp", "spotify", "firefox", "google-chrome-stable", "onlyoffice"])
 
@@ -272,6 +312,36 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     ]
 
 ------------------------------------------------------------------------
+-- MANAGEHOOK
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+-- Window rules:
+
+-- Execute arbitrary actions and WindowSet manipulations when managing
+-- a new window. You can use this to, for example, always float a
+-- particular program, or have a client always appear on a particular
+-- workspace.
+--
+-- To find the property name associated with a program, use
+-- > xprop | grep WM_CLASS
+-- and click on the client you're interested in.
+--
+-- To match on the WM_NAME, you can use 'title' in the same way that
+-- 'className' and 'resource' are used below.
+--
+myManageHook = composeAll
+    [ className =? "vlc"        --> doFloat
+    , className =? "Gimp"           --> doFloat
+    , resource  =? "desktop_window" --> doIgnore
+    , resource  =? "mpv"       --> doIgnore
+    , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat
+    , title =? "Oracle VM VirtualBox Manager"     --> doFloat
+    , className =? "Oracle VM VirtualBox Manager" --> doShift  ( myWorkspaces !! 5) ] <+> namedScratchpadManageHook myScratchPads
+
+------------------------------------------------------------------------
+-- LAYOUTS
+------------------------------------------------------------------------
+------------------------------------------------------------------------
 -- Layouts:
 
 -- You can specify and transform your layouts by modifying these values.
@@ -298,67 +368,15 @@ myLayout = smartBorders $ avoidStruts (tiled ||| Mirror tiled ||| mygrid ||| Ful
      mygrid  = GV.SplitGrid GV.L 2 3 (2/3) (16/10) (5/100)
 
 ------------------------------------------------------------------------
--- Window rules:
-
--- Execute arbitrary actions and WindowSet manipulations when managing
--- a new window. You can use this to, for example, always float a
--- particular program, or have a client always appear on a particular
--- workspace.
---
--- To find the property name associated with a program, use
--- > xprop | grep WM_CLASS
--- and click on the client you're interested in.
---
--- To match on the WM_NAME, you can use 'title' in the same way that
--- 'className' and 'resource' are used below.
---
-myManageHook = composeAll
-    [ className =? "vlc"        --> doFloat
-    , className =? "Gimp"           --> doFloat
-    , resource  =? "desktop_window" --> doIgnore
-    , resource  =? "mpv"       --> doIgnore
-    , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat
-    , title =? "Oracle VM VirtualBox Manager"     --> doFloat
-    , className =? "Oracle VM VirtualBox Manager" --> doShift  ( myWorkspaces !! 5) ] <+> namedScratchpadManageHook myScratchPads
-    
+-- SCRATCHPADS
 ------------------------------------------------------------------------
--- Event handling
-
--- * EwmhDesktops users should change this to ewmhDesktopsEventHook
---
--- Defines a custom handler function for X Events. The function should
--- return (All True) if the default handler is to be run afterwards. To
--- combine event hooks use mappend or mconcat from Data.Monoid.
---
---myEventHook = handleEventHook def <+> fullscreenEventHook
---myEventHook = mempty
-myEventHook = ewmhDesktopsEventHook
-------------------------------------------------------------------------
--- Status bars and logging
-
--- Perform an arbitrary action on each internal state change or X event.
--- See the 'XMonad.Hooks.DynamicLog' extension for examples.
---
-myLogHook = return ()
+myScratchPads = [ NS "terminal" spawnTerm (title =? "scratchpad") (customFloating $ W.RationalRect (0.95 -0.9) (0.95 -0.9) (0.9) (0.9)) ]
+	where
+	spawnTerm = myTerminal ++ " --title scratchpad"
 
 ------------------------------------------------------------------------
--- Startup hook
-
--- Perform an arbitrary action each time xmonad starts or is restarted
--- with mod-q.  Used by, e.g., XMonad.Layout.PerWorkspace to initialize
--- per-workspace layout choices.
---
--- By default, do nothing.
-myStartupHook :: X ()
-myStartupHook = do
-              spawnOnce "source /home/jottley/.fehbg"
-	      --spawnOnce "/home/jottley/.xmonad/utils/setbg"
-              spawnOnce "picom &"
-              spawnOnce "emacs25 --daemon > /dev/null 2>&1"
-              --spawnOnce "export $(dbus-launch)"
-              spawnOnce "export EDITOR=/home/jottley/bin/em"
-
-
+-- MAIN
+------------------------------------------------------------------------
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
 
@@ -394,8 +412,8 @@ defaults = ewmh $ docks def {
       -- hooks, layouts
         layoutHook         = myLayout,
         manageHook         = myManageHook,
-        handleEventHook    = myEventHook,
-        logHook            = myLogHook,
+        handleEventHook    = ewmhDesktopsEventHook,
+        logHook            = return (),
         startupHook        = myStartupHook
     }
 
