@@ -191,7 +191,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_m     ), manPrompt myXPConfig)
 
     -- TreeSelect
-    , ((modm .|. shiftMask, xK_q ), treeselectAction TS.tsDefaultConfig)
+    , ((modm .|. shiftMask, xK_q ), treeselectAction tsDefaultConfig)
 
 
     -- launch albert
