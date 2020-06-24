@@ -50,6 +50,10 @@ function gitup {
   git push -u origin master
 }
 
+function test_term {
+  curl https://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
+}
+
 ## EXPERIMENTAL ##
 
 #Configure Input Method
