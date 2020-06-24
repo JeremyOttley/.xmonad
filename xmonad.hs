@@ -119,7 +119,6 @@ myFocusedBorderColor = "#bbc5ff"
 myStartupHook :: X ()
 myStartupHook = do
 	spawnOnce "setbg"
-	spawnOnce "picom &"
 	spawnOnce "emacs25 --daemon > /dev/null 2>&1"
 	spawnOnce "export EDITOR=/home/jottley/bin/em"
 
@@ -163,6 +162,7 @@ tsDefaultConfig = TS.TSConfig { TS.ts_hidechildren = True
                               , TS.ts_originX      = 0
                               , TS.ts_originY      = 0
                               , TS.ts_indent       = 80
+			      , TS.ts_navigate     = myTreeNavigation
                               }
 
 treeselectAction :: TS.TSConfig (X ()) -> X ()
@@ -171,6 +171,23 @@ treeselectAction a = TS.treeselectAction a
    , Node (TS.TSNode "Retart" "Reboot the system" (spawn "reboot")) []
    , Node (TS.TSNode "Logout" "Logout of XMonad" (io (exitWith ExitSuccess))) []
    ]
+
+
+myTreeNavigation = M.fromList
+    [ ((0, xK_Escape), TS.cancel)
+    , ((0, xK_Return), TS.select)
+    , ((0, xK_space),  TS.select)
+    , ((0, xK_Up),     TS.movePrev)
+    , ((0, xK_Down),   TS.moveNext)
+    , ((0, xK_Left),   TS.moveParent)
+    , ((0, xK_Right),  TS.moveChild)
+    , ((0, xK_k),      TS.movePrev)
+    , ((0, xK_j),      TS.moveNext)
+    , ((0, xK_h),      TS.moveParent)
+    , ((0, xK_l),      TS.moveChild)
+    , ((0, xK_o),      TS.moveHistBack)
+    , ((0, xK_i),      TS.moveHistForward)
+    ]
 
 ------------------------------------------------------------------------
 -- KEYBINDINGS
