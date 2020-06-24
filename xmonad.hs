@@ -118,7 +118,7 @@ myFocusedBorderColor = "#bbc5ff"
 -- By default, do nothing.
 myStartupHook :: X ()
 myStartupHook = do
-	spawnOnce "source /home/jottley/.xmonad/utils/setbg"
+	spawnOnce "setbg"
 	spawnOnce "picom &"
 	spawnOnce "emacs25 --daemon > /dev/null 2>&1"
 	spawnOnce "export EDITOR=/home/jottley/bin/em"
