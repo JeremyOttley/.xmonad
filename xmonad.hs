@@ -42,10 +42,6 @@ import XMonad.Layout.Tabbed
 
     -- Layouts modifiers
 import XMonad.Layout.NoBorders
---import XMonad.Layout.MultiToggle (mkToggle, single, EOT(EOT), (??))
---import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBORDERS))
---import qualified XMonad.Layout.ToggleLayouts as T (toggleLayouts, ToggleLayout(Toggle))
---import qualified XMonad.Layout.MultiToggle as MT (Toggle(..))
 import XMonad.Layout.ToggleLayouts
 
     -- Prompt
@@ -351,11 +347,10 @@ myManageHook = composeAll
     [ className =? "vlc"        --> doFloat
     , className =? "Gimp"           --> doFloat
     , className =? "Gimp"           --> doShift  ( myWorkspaces !! 2)
+    , (role =? "gimp-toolbox" <||> role =? "gimp-image-window") --> (ask >>= doF . W.sink)
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "mpv"       --> doIgnore
     , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat
-    , (role =? "gimp-toolbox" <||> role =? "gimp-image-window") --> (ask >>= doF . W.sink)
-    , isFullscreen --> doFullFloat -- for fullscreen apps
     , title =? "Oracle VM VirtualBox Manager"     --> doFloat
     , className =? "Oracle VM VirtualBox Manager" --> doShift  ( myWorkspaces !! 5) ] <+> namedScratchpadManageHook myScratchPads
 
