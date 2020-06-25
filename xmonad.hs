@@ -349,6 +349,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 myManageHook = composeAll
     [ className =? "vlc"        --> doFloat
     , className =? "Gimp"           --> doFloat
+    , className =? "Gimp"           --> doShift  ( myWorkspaces !! 2)
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "mpv"       --> doIgnore
     , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat
