@@ -119,6 +119,7 @@ myFocusedBorderColor = "#bbc5ff"
 myStartupHook :: X ()
 myStartupHook = do
 	spawnOnce "setbg &"
+	spawnOnce "dunst &"
 	spawnOnce "export EDITOR=/home/jottley/bin/em"
 	spawnOnce "emacs25 --daemon > /dev/null 2>&1"
 
