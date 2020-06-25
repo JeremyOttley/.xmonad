@@ -38,7 +38,7 @@ import XMonad.Hooks.WorkspaceHistory
     -- Layouts
 --import XMonad.Layout.Grid
 import qualified XMonad.Layout.GridVariants as GV
---import XMonad.Layout.Tabbed
+import XMonad.Layout.Tabbed
 
     -- Layouts modifiers
 import XMonad.Layout.NoBorders
@@ -46,6 +46,7 @@ import XMonad.Layout.NoBorders
 --import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBORDERS))
 --import qualified XMonad.Layout.ToggleLayouts as T (toggleLayouts, ToggleLayout(Toggle))
 --import qualified XMonad.Layout.MultiToggle as MT (Toggle(..))
+import XMonad.Layout.ToggleLayouts
 
     -- Prompt
 import XMonad.Prompt
@@ -211,15 +212,14 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- TreeSelect
     , ((modm .|. shiftMask, xK_q ), treeselectAction tsDefaultConfig)
 
-
-    -- launch albert
-    --, ((modm .|. shiftMask, xK_p     ), spawn "albert")
-
     -- Scratchpads
     , ((modm .|. controlMask, xK_Return ), namedScratchpadAction myScratchPads "terminal")
 
     -- launch nnn
-    , ((modm,               xK_f     ), spawn "alacritty -e nnn")
+    --, ((modm,               xK_f     ), spawn "alacritty -e nnn")
+    
+    -- Toggle Fullscreen
+    , ((modm,               xK_f     ), sendMessage (Toggle "Full"))
 
     -- GridSelect: find proper names for each with xprop
     , ((modm .|. shiftMask, xK_p), spawnSelected defaultGSConfig ["joplin-james-carroll.joplin", "intellij-idea-community", "discord", "acrobat", "gimp", "spotify", "firefox", "google-chrome-stable", "onlyoffice"])
@@ -354,6 +354,8 @@ myManageHook = composeAll
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "mpv"       --> doIgnore
     , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat
+    , (role =? "gimp-toolbox" <||> role =? "gimp-image-window") --> (ask >>= doF . W.sink)
+    , isFullscreen --> doFullFloat -- for fullscreen apps
     , title =? "Oracle VM VirtualBox Manager"     --> doFloat
     , className =? "Oracle VM VirtualBox Manager" --> doShift  ( myWorkspaces !! 5) ] <+> namedScratchpadManageHook myScratchPads
 
@@ -371,7 +373,7 @@ myManageHook = composeAll
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = smartBorders $ avoidStruts (tiled ||| Mirror tiled ||| mygrid ||| Full)
+myLayout = smartBorders $ avoidStruts $ toggleLayouts Full (tiled ||| Mirror tiled ||| tabs ||| mygrid)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -385,6 +387,16 @@ myLayout = smartBorders $ avoidStruts (tiled ||| Mirror tiled ||| mygrid ||| Ful
      -- Percent of screen to increment by when resizing panes
      delta   = 3/100
      mygrid  = GV.SplitGrid GV.L 2 3 (2/3) (16/10) (5/100)
+     tabs     = tabbed shrinkText myTabConfig
+       where
+         myTabConfig = def { fontName            = "xft:JetBrains Mono:regular:pixelsize=11"
+                      , activeColor         = "#292d3e"
+                      , inactiveColor       = "#3e445e"
+                      , activeBorderColor   = "#292d3e"
+                      , inactiveBorderColor = "#292d3e"
+                      , activeTextColor     = "#ffffff"
+                      , inactiveTextColor   = "#d0d0d0"
+                      }
 
 ------------------------------------------------------------------------
 -- SCRATCHPADS
