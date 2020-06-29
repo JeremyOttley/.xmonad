@@ -353,7 +353,7 @@ myManageHook = composeAll
     [ className =? "vlc"        --> doFloat
     , className =? "Gimp"           --> doFloat
     , className =? "Gimp"           --> doShift  ( myWorkspaces !! 2)
-    , (role =? "gimp-toolbox" <||> role =? "gimp-image-window") --> (ask >>= doF . W.sink)
+    --, (role =? "gimp-toolbox" <||> role =? "gimp-image-window") --> (ask >>= doF . W.sink)
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "mpv"       --> doIgnore
     , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat
@@ -377,7 +377,7 @@ myManageHook = composeAll
 myLayout = smartBorders $ avoidStruts $ toggleLayouts Full (tiled ||| twoup ||| tabs ||| mygrid)
   where
      -- default tiling algorithm partitions the screen into two panes
-     tiled   = ResizableTall nmaster delta ratio
+     tiled   = ResizableTall nmaster delta ratio []
 
      -- The default number of windows in the master pane
      nmaster = 1
