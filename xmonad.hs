@@ -39,6 +39,8 @@ import XMonad.Hooks.WorkspaceHistory
 --import XMonad.Layout.Grid
 import qualified XMonad.Layout.GridVariants as GV
 import XMonad.Layout.Tabbed
+import XMonad.Layout.ResizableTile
+import XMonad.Layout.TwoPane
 
     -- Layouts modifiers
 import XMonad.Layout.NoBorders
@@ -200,6 +202,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- launch dmenu
     --, ((modm,               xK_p     ), spawn "dmenu_run")
+    
+    -- ResizableTall
+    , ((modm,               xK_a), sendMessage MirrorShrink)
+    , ((modm,               xK_z), sendMessage MirrorExpand)
 
     -- XPrompt
     , ((modm,               xK_p     ), shellPrompt myXPConfig)
@@ -368,10 +374,10 @@ myManageHook = composeAll
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = smartBorders $ avoidStruts $ toggleLayouts Full (tiled ||| Mirror tiled ||| tabs ||| mygrid)
+myLayout = smartBorders $ avoidStruts $ toggleLayouts Full (tiled ||| twoup ||| tabs ||| mygrid)
   where
      -- default tiling algorithm partitions the screen into two panes
-     tiled   = Tall nmaster delta ratio
+     tiled   = ResizableTall nmaster delta ratio
 
      -- The default number of windows in the master pane
      nmaster = 1
@@ -382,6 +388,7 @@ myLayout = smartBorders $ avoidStruts $ toggleLayouts Full (tiled ||| Mirror til
      -- Percent of screen to increment by when resizing panes
      delta   = 3/100
      mygrid  = GV.SplitGrid GV.L 2 3 (2/3) (16/10) (5/100)
+     twoup   = TwoPane delta ratio
      tabs     = tabbed shrinkText myTabConfig
        where
          myTabConfig = def { fontName            = "xft:JetBrains Mono:regular:pixelsize=11"
